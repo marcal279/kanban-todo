@@ -1,0 +1,8 @@
+<mat-card class="cssTask" *ngIf="task" (dblclick)="edit.emit(task)" style="margin: 0.5rem;">
+    <mat-card-title>{{task.title}}</mat-card-title>
+    <mat-card-content>
+        <p *ngIf="task.desc">{{task.desc}}</p>
+        <p>Created: {{task.created}} <span *ngIf="task.due">Due: {{task.due}}</span></p>
+        <p>Priority: {{task.priority}}</p>
+    </mat-card-content>
+</mat-card>
