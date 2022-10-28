@@ -1,8 +1,39 @@
-<mat-card class="cssTask" *ngIf="task" (dblclick)="edit.emit(task)" style="margin: 0.5rem;">
+<style>
+    .mat-card-title{
+        font-size: large;
+    }
+
+    .mat-card{
+        font-family: 'Kumbh Sans', sans-serif;
+    }
+
+    .highPr{ background-color: rgb(255, 172, 172); }
+    .mediumPr{}
+    .lowPr{ background-color: rgb(178, 255, 190); }
+    
+    .highPr:hover{ 
+        transition-duration: 0.7s;
+        background-color: rgb(238, 139, 139); 
+    }
+    .mediumPr:hover{
+        transition-duration: 0.7s;
+        background: rgb(232, 231, 231); 
+    }
+    .lowPr:hover{ 
+        transition-duration: 0.7s;
+        background-color: rgb(129, 225, 143); 
+    }
+
+    .mat-card:hover{
+        cursor: pointer;
+    }
+</style>
+
+<mat-card class="cssTask" *ngIf="task" [ngClass]="getPriorityClass()" style="margin: 0.5rem;" (dblclick)="edit.emit(task)" >
     <mat-card-title>{{task.title}}</mat-card-title>
     <mat-card-content>
         <p *ngIf="task.desc">{{task.desc}}</p>
-        <p>Created: {{task.created}} <span *ngIf="task.due">Due: {{task.due}}</span></p>
+        <p>Created: {{task.created | date}} <span *ngIf="task.due">Due: {{task.due | date}}</span></p>
         <p>Priority: {{task.priority}}</p>
     </mat-card-content>
 </mat-card>

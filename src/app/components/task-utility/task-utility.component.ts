@@ -12,6 +12,17 @@ export class TaskUtilityComponent implements OnInit {
 
   constructor() { }
 
+  getPriorityClass(){
+    if(this.task){
+      switch(this.task.priority){
+        case 'High': return 'highPr';
+        case 'Medium': return 'mediumPr';
+        case 'Low': return 'lowPr';
+      }
+    }
+    return ''
+  }
+
   ngOnInit(): void {
   }
 

@@ -1,0 +1,91 @@
+<style>
+    .swimlane{
+        width: 22.5%;
+        margin-top: 1rem;
+    }
+    .swimHeader{
+        margin-bottom: 0.5rem;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 500;
+        text-decoration: underline;
+    }
+    .droppableArea{
+        min-height: 70vh;
+        border-radius: 1.25rem;
+        background-color: rgb(245, 240, 250);
+    }
+    #cssCreated{}
+    #cssInProgress{}
+    #cssCompleted{}
+    #cssSaved{}
+
+    .cdk-drag-animating {   /*https://developers.google.com/codelabs/building-a-web-app-with-angular-and-firebase#6:~:text=.cdk%2Ddrag%2Danimating%20%7B%0A%C2%A0%20transition%3A%20transform%20250ms%3B%0A%7D%0A%0A.cdk%2Ddrag%2Dplaceholder%20%7B%0A%C2%A0%20opacity%3A%200%3B%0A%7D*/
+       transition: transform 250ms;
+    }
+    .cdk-drag-placeholder { /*this ensures that only one card visible when dragging, otherwise 2 could be seen*/
+        opacity: 0;
+    }
+</style>
+
+<body>
+    <button mat-fab color="primary" (click)="createTask()" style="position: absolute; bottom: 1rem; right: 1rem; z-index: 999;">
+        <mat-icon>add</mat-icon>
+    </button>
+
+    <mat-toolbar color="primary">
+        <span>
+            <mat-icon>check_circle</mat-icon>
+            <span>TODO: The Kanban Planner</span>
+        </span>
+    </mat-toolbar>
+
+    <!-- <app-task-utility *ngFor="let todoItem of todoList" [task]="todoItem"></app-task-utility> -->
+
+    <div style="display: flex; justify-content: space-evenly; padding-bottom: 2rem;">
+        <!-- created, in progress, completed, saved for later -->
+        <div class="swimlane">
+            <h2 class="swimHeader">Created</h2>
+            <mat-card class="droppableArea" id="cssCreated"
+            cdkDropList #createdLane="cdkDropList"
+            [cdkDropListData]="createdTasks" [cdkDropListConnectedTo]="[inProgressLane, completedLane, savedLane]"
+            (cdkDropListDropped)="drop($event)">
+                <p class="emptyLane" *ngIf="createdTasks.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask(createdTasks, $event)" *ngFor="let task of createdTasks" [task]="task"></app-task-utility>
+            </mat-card>
+        </div>
+
+        <div class="swimlane">
+            <h2 class="swimHeader">In Progress</h2>
+            <mat-card class="droppableArea" id="cssInProgress"
+            cdkDropList #inProgressLane="cdkDropList"
+            [cdkDropListData]="inProgressTasks" [cdkDropListConnectedTo]="[createdLane, completedLane, savedLane]"
+            (cdkDropListDropped)="drop($event)">
+                <p class="emptyLane" *ngIf="inProgressTasks.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask(inProgressTasks, $event)" *ngFor="let task of inProgressTasks" [task]="task"></app-task-utility>
+            </mat-card>
+        </div>
+
+        <div class="swimlane">
+            <h2 class="swimHeader">Completed</h2>
+            <mat-card class="droppableArea" id="cssCompleted" 
+            cdkDropList #completedLane="cdkDropList"
+            [cdkDropListData]="completedTasks" [cdkDropListConnectedTo]="[createdLane, inProgressLane, savedLane]"
+            (cdkDropListDropped)="drop($event)">
+                <p class="emptyLane" *ngIf="completedTasks.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask(completedTasks, $event)" *ngFor="let task of completedTasks" [task]="task"></app-task-utility>
+            </mat-card>
+        </div>
+
+        <div class="swimlane">
+            <h2 class="swimHeader">Saved for Later</h2>
+            <mat-card class="droppableArea" id="cssSaved" 
+            cdkDropList #savedLane="cdkDropList"
+            [cdkDropListData]="savedTasks" [cdkDropListConnectedTo]="[createdLane, inProgressLane, completedLane]"
+            (cdkDropListDropped)="drop($event)">
+                <p class="emptyLane" *ngIf="savedTasks.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask(savedTasks, $event)" *ngFor="let task of savedTasks" [task]="task"></app-task-utility>
+            </mat-card>
+        </div>
+
+    </div>
+</body>
