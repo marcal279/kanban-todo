@@ -1,9 +1,9 @@
 export interface Task {
-    tid: Number,
-    title: String,
-    desc?: String,
-    priority: String,
+    tid?: string,
+    title: string,
+    desc?: string,
+    priority: string,
     created: Date,
     due?: Date,
-    status: String
+    status: string
 }

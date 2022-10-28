@@ -5,17 +5,17 @@
 <mat-dialog-content>
     <h2>{{data.title}} Task</h2>
 
-    <mat-form-field>
+    <!-- <mat-form-field>
         <mat-label>TID</mat-label>
         <input type="text" matInput placeholder="Task ID" [(ngModel)]="currentTask.tid">
-    </mat-form-field>
+    </mat-form-field> -->
 
     <mat-form-field>
         <mat-label>Title</mat-label>
         <input type="text" matInput placeholder="Task Title" [(ngModel)]="currentTask.title" required>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field style="display: block;">
         <mat-label>Description</mat-label>
         <textarea matInput placeholder="Description of the task" [(ngModel)]="currentTask.desc"></textarea>
     </mat-form-field>
@@ -29,7 +29,7 @@
         </mat-select>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field style="margin-left: 2rem;">
         <mat-label>Status</mat-label>
         <mat-select [(value)]="currentTask.status">
             <mat-option value="Created">Created</mat-option>
@@ -43,6 +43,6 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-raised-button (click)="cancel()">Cancel</button>
-    <button mat-raised-button color="warn" [mat-dialog-close]="{task: this.currentTask, delete: true}" *ngIf="this.data.title=='Update'">Delete</button>
-    <button mat-raised-button color="primary" [mat-dialog-close]="{task: this.currentTask}">{{this.data.title}}</button>
+    <button mat-raised-button color="warn" *ngIf="this.data.title=='Update'" (click)="delete(this.currentTask)">Delete</button>
+    <button mat-raised-button color="primary" (click)="mainAction(this.currentTask)">{{this.data.title}}</button>
 </mat-dialog-actions>

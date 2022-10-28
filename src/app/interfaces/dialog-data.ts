@@ -1,7 +1,7 @@
 import { Task } from "./task";
 
 export interface DialogData {
-    title: String, // create or update
+    title: string, // create or update
     task: Task
 }
 

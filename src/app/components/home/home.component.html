@@ -14,10 +14,6 @@
         border-radius: 1.25rem;
         background-color: rgb(245, 240, 250);
     }
-    #cssCreated{}
-    #cssInProgress{}
-    #cssCompleted{}
-    #cssSaved{}
 
     .cdk-drag-animating {   /*https://developers.google.com/codelabs/building-a-web-app-with-angular-and-firebase#6:~:text=.cdk%2Ddrag%2Danimating%20%7B%0A%C2%A0%20transition%3A%20transform%20250ms%3B%0A%7D%0A%0A.cdk%2Ddrag%2Dplaceholder%20%7B%0A%C2%A0%20opacity%3A%200%3B%0A%7D*/
        transition: transform 250ms;
@@ -45,45 +41,45 @@
         <!-- created, in progress, completed, saved for later -->
         <div class="swimlane">
             <h2 class="swimHeader">Created</h2>
-            <mat-card class="droppableArea" id="cssCreated"
+            <mat-card class="droppableArea" id="created"
             cdkDropList #createdLane="cdkDropList"
-            [cdkDropListData]="createdTasks" [cdkDropListConnectedTo]="[inProgressLane, completedLane, savedLane]"
+            [cdkDropListData]="created | async" [cdkDropListConnectedTo]="[inProgressLane, completedLane, savedLane]"
             (cdkDropListDropped)="drop($event)">
-                <p class="emptyLane" *ngIf="createdTasks.length==0">Empty</p>
-                <app-task-utility cdkDrag (edit)="editTask(createdTasks, $event)" *ngFor="let task of createdTasks" [task]="task"></app-task-utility>
+                <p class="emptyLane" *ngIf="(created | async)?.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask($event)" *ngFor="let task of created | async" [task]="task"></app-task-utility>
             </mat-card>
         </div>
 
         <div class="swimlane">
             <h2 class="swimHeader">In Progress</h2>
-            <mat-card class="droppableArea" id="cssInProgress"
+            <mat-card class="droppableArea" id="inProgress"
             cdkDropList #inProgressLane="cdkDropList"
-            [cdkDropListData]="inProgressTasks" [cdkDropListConnectedTo]="[createdLane, completedLane, savedLane]"
+            [cdkDropListData]="inProgress | async" [cdkDropListConnectedTo]="[createdLane, completedLane, savedLane]"
             (cdkDropListDropped)="drop($event)">
-                <p class="emptyLane" *ngIf="inProgressTasks.length==0">Empty</p>
-                <app-task-utility cdkDrag (edit)="editTask(inProgressTasks, $event)" *ngFor="let task of inProgressTasks" [task]="task"></app-task-utility>
+                <p class="emptyLane" *ngIf="(inProgress | async)?.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask($event)" *ngFor="let task of inProgress | async" [task]="task"></app-task-utility>
             </mat-card>
         </div>
 
         <div class="swimlane">
             <h2 class="swimHeader">Completed</h2>
-            <mat-card class="droppableArea" id="cssCompleted" 
+            <mat-card class="droppableArea" id="completed" 
             cdkDropList #completedLane="cdkDropList"
-            [cdkDropListData]="completedTasks" [cdkDropListConnectedTo]="[createdLane, inProgressLane, savedLane]"
+            [cdkDropListData]="completed | async" [cdkDropListConnectedTo]="[createdLane, inProgressLane, savedLane]"
             (cdkDropListDropped)="drop($event)">
-                <p class="emptyLane" *ngIf="completedTasks.length==0">Empty</p>
-                <app-task-utility cdkDrag (edit)="editTask(completedTasks, $event)" *ngFor="let task of completedTasks" [task]="task"></app-task-utility>
+                <p class="emptyLane" *ngIf="(completed | async)?.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask($event)" *ngFor="let task of completed | async" [task]="task"></app-task-utility>
             </mat-card>
         </div>
 
         <div class="swimlane">
             <h2 class="swimHeader">Saved for Later</h2>
-            <mat-card class="droppableArea" id="cssSaved" 
+            <mat-card class="droppableArea" id="saved" 
             cdkDropList #savedLane="cdkDropList"
-            [cdkDropListData]="savedTasks" [cdkDropListConnectedTo]="[createdLane, inProgressLane, completedLane]"
+            [cdkDropListData]="saved | async" [cdkDropListConnectedTo]="[createdLane, inProgressLane, completedLane]"
             (cdkDropListDropped)="drop($event)">
-                <p class="emptyLane" *ngIf="savedTasks.length==0">Empty</p>
-                <app-task-utility cdkDrag (edit)="editTask(savedTasks, $event)" *ngFor="let task of savedTasks" [task]="task"></app-task-utility>
+                <p class="emptyLane" *ngIf="(saved | async)?.length==0">Empty</p>
+                <app-task-utility cdkDrag (edit)="editTask($event)" *ngFor="let task of saved | async" [task]="task"></app-task-utility>
             </mat-card>
         </div>
 

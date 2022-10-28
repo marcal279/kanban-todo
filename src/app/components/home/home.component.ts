@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
 import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { TaskUtilityComponent } from '../task-utility/task-utility.component';
-import { Task } from '../../interfaces/task';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+
+import { Task } from '../../interfaces/task';
 import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
+import { TaskUtilityComponent } from '../task-utility/task-utility.component';
+import { TaskService } from '../../shared/task/task.service';
+
+import {AngularFirestore} from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -13,56 +18,27 @@ import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
 })
 export class HomeComponent implements OnInit {
   
-  findInList(taskList: Task[], task: Task): number{
-    var localIndex = -1;
-    taskList.forEach((t, index)=>{
-      if(t.tid==task.tid) localIndex = index;
-    })
-    return localIndex;
-  }
+  // findInList(taskList: Task[], task: Task): number{
+  //   var localIndex = -1;
+  //   taskList.forEach((t, index)=>{
+  //     if(t.tid==task.tid) localIndex = index;
+  //   })
+  //   return localIndex;
+  // }
 
-  createdTasks: Task[] = [          //temporary
-    {
-      tid: 1,
-      title: 'Complete Kanban Todo',
-      created: new Date(),
-      priority: 'Medium',
-      status: 'Created'
-    },
-    {
-      tid: 2,
-      title: 'Start other work',
-      desc: 'Stop procrastinating on literally everything else',
-      created: new Date(),
-      priority: 'Medium',
-      status: 'Created'
-    },
-    {
-      tid: 3,
-      title: 'Task 3',
-      created: new Date(),
-      priority: 'High',
-      status: 'Created'
-    },
-    {
-      tid: 4,
-      title: 'Low Priority',
-      created: new Date(),
-      priority: 'Low',
-      status: 'Created'
-    },
-  ]
-  inProgressTasks: Task[] = []
-  completedTasks: Task[] = []
-  savedTasks: Task[] = []
+  created = this.store.collection('created').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
+  inProgress = this.store.collection('inProgress').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
+  completed = this.store.collection('completed').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
+  saved = this.store.collection('saved').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
 
-  constructor(private dialog: MatDialog) {  }
+  constructor(
+    private dialog: MatDialog, 
+    private store:AngularFirestore, 
+    private taskService: TaskService
+    ) {  }
 
 
-
-
-  taskIndex!: number;
-  editTask(taskList: Task[], task: Task):void {
+  editTask(task: Task):void {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.width = '30rem';
@@ -75,77 +51,22 @@ export class HomeComponent implements OnInit {
     const dialogRef = this.dialog.open(TaskDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe((result: any)=>{
-      if(!result) return;
-      
-      // todo edit not working
-      switch(result.task.status){
-        case 'Created': {
-          this.taskIndex = this.findInList(this.createdTasks,task);
-
-          if(result.delete){
-            this.createdTasks.splice(this.taskIndex, 1);
-          } else{ // update 
-            this.createdTasks[this.taskIndex] = task;
-          }
-          break;
-        }
-        case 'In Progress': {
-          this.taskIndex = this.findInList(this.inProgressTasks,task);
-
-          if(result.delete){
-            this.inProgressTasks.splice(this.taskIndex, 1);
-          } else{ // update 
-            this.inProgressTasks[this.taskIndex] = task;
-          }
-          break;
-        }
-        case 'Completed': {
-          this.taskIndex = this.findInList(this.completedTasks,task);
-
-          if(result.delete){
-            this.completedTasks.splice(this.taskIndex, 1);
-          } else{ // update 
-            this.completedTasks[this.taskIndex] = task;
-          }
-          break;
-        }
-        case 'Saved': {
-          this.taskIndex = this.findInList(this.savedTasks,task);
-
-          if(result.delete){
-            this.savedTasks.splice(this.taskIndex, 1);
-          } else{ // update 
-            this.savedTasks[this.taskIndex] = task;
-          }
-          break;
-        }
-        case undefined: {
-          // on cancel
-          break;
-        }
-        default: {
-          alert('Error in dialog return')
-          break;
-        }
-      }
-
-      // var taskIndex = -1;
-      // focusList.forEach((el, index)=>{if(el.tid==result.task.id) taskIndex = index;})
-      
-      // if(result.delete){
-      //   focusList.splice(taskIndex, 1);
-      //   alert('index: '+taskIndex+' list: '+JSON.stringify(focusList));
-      // }
-      // else{
-      //   focusList[taskIndex] = result.task;
-      // }
-
+      alert('update dialog closed');
     })
-  }  //todo to be completed
+  }
 
-  drop(event: CdkDragDrop<Task[]>):void {
+  drop(event: CdkDragDrop<Task[]|null>):void {
     if (event.previousContainer===event.container) return;
-    if (!event.container.data || !event.previousContainer.data) return;
+    if (!event.previousContainer.data || !event.container.data) return;
+    
+    const item = event.previousContainer.data[event.previousIndex];
+    this.store.firestore.runTransaction(()=>{
+      const promise = Promise.all([
+        this.taskService.switchLanes(event.previousContainer.id, event.container.id, item),
+        this.taskService.updateStatus(this.taskService.getStatus(item.status), item)
+      ])
+      return promise
+    });
 
     transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     // todo on drop change status of task
@@ -157,47 +78,12 @@ export class HomeComponent implements OnInit {
     dialogConfig.width = '30rem';
     dialogConfig.data = {
       title: 'Create',
-      task: {
-        tid: 199,
-        title: '',
-        desc: '',
-        created: new Date(),
-        priority: 'High',
-        status: 'Created'
-      }
+      task: this.taskService.generateNewTask()
     }
 
     const dialogRef = this.dialog.open(TaskDialogComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((result: any)=>{
-      if(!result) return;
-
-      switch(result.task.status){
-        case 'Created': {
-          this.createdTasks.push(result.task)
-          break;
-        }
-        case 'In Progress': {
-          this.inProgressTasks.push(result.task);
-          break;
-        }
-        case 'Completed': {
-          this.completedTasks.push(result.task)
-          break;
-        }
-        case 'Saved': {
-          this.savedTasks.push(result.task)
-          break;
-        }
-        case undefined: {
-          // on cancel
-          break;
-        }
-        default: {
-          alert('Error in dialog return')
-          break;
-        }
-      }
-
+      alert('create dialog closed')
     })
   }
 
