@@ -1,6 +1,7 @@
 # KanbanTodo
 
 See https://developers.google.com/codelabs/building-a-web-app-with-angular-and-firebase#0
+
 Application created to learn rxjs BehaviourSubject, CdkDragDrop, and Angular events
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.2.
