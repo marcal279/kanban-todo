@@ -17,15 +17,6 @@ import { Observable } from 'rxjs';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  
-  // findInList(taskList: Task[], task: Task): number{
-  //   var localIndex = -1;
-  //   taskList.forEach((t, index)=>{
-  //     if(t.tid==task.tid) localIndex = index;
-  //   })
-  //   return localIndex;
-  // }
-
   created = this.store.collection('created').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
   inProgress = this.store.collection('inProgress').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
   completed = this.store.collection('completed').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
