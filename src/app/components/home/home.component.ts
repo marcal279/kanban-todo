@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
     const dialogRef = this.dialog.open(TaskDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe((result: any)=>{
-      alert('update dialog closed');
+      // alert('update dialog closed');
     })
   }
 
@@ -83,7 +83,7 @@ export class HomeComponent implements OnInit {
 
     const dialogRef = this.dialog.open(TaskDialogComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((result: any)=>{
-      alert('create dialog closed')
+      // alert('create dialog closed')
     })
   }
 
