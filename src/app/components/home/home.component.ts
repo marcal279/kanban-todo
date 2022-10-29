@@ -8,8 +8,16 @@ import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
 import { TaskUtilityComponent } from '../task-utility/task-utility.component';
 import { TaskService } from '../../shared/task/task.service';
 
-import {AngularFirestore} from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
+import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/compat/firestore';
+import { Observable, BehaviorSubject } from 'rxjs';
+
+const getObservable = (collection: AngularFirestoreCollection<Task>) =>{
+  const subject = new BehaviorSubject<Task[]>([]);
+  collection.valueChanges({idField: 'tid'}).subscribe((val:Task[]) => {
+    subject.next(val);
+  });
+  return subject;
+}
 
 @Component({
   selector: 'app-home',
@@ -17,17 +25,17 @@ import { Observable } from 'rxjs';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  created = this.store.collection('created').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
-  inProgress = this.store.collection('inProgress').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
-  completed = this.store.collection('completed').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
-  saved = this.store.collection('saved').valueChanges({ idField: 'tid' }) as Observable<Task[]>;
+
+  created = getObservable(this.store.collection('created')) as Observable<Task[]>;
+  inProgress = getObservable(this.store.collection('inProgress')) as Observable<Task[]>;
+  completed = getObservable(this.store.collection('completed')) as Observable<Task[]>;
+  saved = getObservable(this.store.collection('saved')) as Observable<Task[]>;
 
   constructor(
     private dialog: MatDialog, 
     private store:AngularFirestore, 
     private taskService: TaskService
-    ) {  }
-
+  ) {  }
 
   editTask(task: Task):void {
     const dialogConfig = new MatDialogConfig();
