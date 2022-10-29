@@ -47,8 +47,13 @@ export class TaskService {
   }
 
   updateTask(task: Task){
-    const taskCollection = this.getCollection(task);
-    this.store.collection(taskCollection).doc(task.tid).update(task);
+    try{
+      const taskCollection = this.getCollection(task);
+      this.store.collection(taskCollection).doc(task.tid).set(task);
+    }catch(err){
+      this.createTask(task);
+      // alert('created instead')
+    }
   }
 
   deleteTask(task: Task){
