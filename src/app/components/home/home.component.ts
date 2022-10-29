@@ -63,7 +63,7 @@ export class HomeComponent implements OnInit {
     this.store.firestore.runTransaction(()=>{
       const promise = Promise.all([
         this.taskService.switchLanes(event.previousContainer.id, event.container.id, item),
-        this.taskService.updateStatus(this.taskService.getStatus(item.status), item)
+        // this.taskService.updateStatus(this.taskService.getStatus(item.status), item)
       ])
       return promise
     });
