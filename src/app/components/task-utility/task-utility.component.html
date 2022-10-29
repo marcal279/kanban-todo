@@ -34,7 +34,7 @@
     <mat-card-title>{{task.title}}</mat-card-title>
     <mat-card-content>
         <p *ngIf="task.desc">{{task.desc}}</p>
-        <p>Created: {{task.created | date}} <span *ngIf="task.due">Due: {{task.due | date}}</span></p>
+        <p>Created: {{task.created}} <span *ngIf="task.due">Due: {{task.due}}</span></p>
         <p>Priority: {{task.priority}}</p>
     </mat-card-content>
 </mat-card>

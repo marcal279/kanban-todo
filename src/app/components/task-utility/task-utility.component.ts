@@ -23,6 +23,15 @@ export class TaskUtilityComponent implements OnInit {
     return ''
   }
 
+  getDateFromTimestamp(dateStr: string): Date{
+    var milli = Number(dateStr.substring(dateStr.indexOf('=')+1, dateStr.indexOf(','))) * 1000
+    return new Date(milli)
+  }
+
+  getDateFromString(dateStr: string): Date{
+    return new Date(dateStr)
+  }
+
   ngOnInit(): void {
   }
 
